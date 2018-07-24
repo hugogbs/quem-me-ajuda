@@ -24,6 +24,15 @@ const TutorSchema = new Schema({
   },
   amount_of_money: {
     type: Number
+  },
+  places: {
+    type: [String],
+    required: true
+  },
+  schedules: {
+    type: Map,
+    of: [Number], // day : [hour]
+    required: true
   }
 });
 
