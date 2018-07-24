@@ -49,4 +49,29 @@ router.post("/register", (req, res) => {
   });
 });
 
+// @route   GET api/users/login
+// @desc    Login user / Returning JTW Token
+// @access  Public
+router.post("/login", (req, res) => {
+  const registration = req.body.registration;
+  const password = req.body.password;
+
+  // Find user by registration
+  User.findOne({ registration }).then(user => {
+    // Check for user
+    if (!user) {
+      return res.status(404).json({ registration: "User not found" });
+    }
+
+    // Check Password
+    bcrypt.compare(password, user.password).then(isMatch => {
+      if (isMatch) {
+        res.json({ msg: "Sucess" });
+      } else {
+        return res.status(400).json({ password: "Passmord incorrect" });
+      }
+    });
+  });
+});
+
 module.exports = router;
