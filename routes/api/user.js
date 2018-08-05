@@ -26,9 +26,8 @@ router.post("/register", (req, res) => {
 
   // Check Validation
   if (!isValid) {
-    res.status(400).json(errors);
+    return res.status(400).json(errors);
   }
-
   User.findOne({ registration: req.body.registration }).then(user => {
     if (user) {
       errors.registration = "Registration already exists";
@@ -72,7 +71,7 @@ router.post("/login", (req, res) => {
 
   // Check Validation
   if (!isValid) {
-    res.status(400).json(errors);
+    return res.status(400).json(errors);
   }
 
   const registration = req.body.registration;
