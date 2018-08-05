@@ -8,6 +8,7 @@ const passport = require("passport");
 
 // Load input validation
 const validateRegisterInput = require("../../validation/register");
+const validateLoginInput = require("../../validation/login");
 
 // Load User model
 const User = require("../../models/User");
@@ -30,7 +31,8 @@ router.post("/register", (req, res) => {
 
   User.findOne({ registration: req.body.registration }).then(user => {
     if (user) {
-      return res.status(400).json({ email: "Registration already exists" });
+      errors.registration = "Registration already exists";
+      return res.status(400).json(errors);
     } else {
       const avatar = gravatar.url(req.body.email, {
         s: "150", // Size
@@ -66,6 +68,13 @@ router.post("/register", (req, res) => {
 // @desc    Login user / Returning JTW Token
 // @access  Public
 router.post("/login", (req, res) => {
+  const { errors, isValid } = validateLoginInput(req.body);
+
+  // Check Validation
+  if (!isValid) {
+    res.status(400).json(errors);
+  }
+
   const registration = req.body.registration;
   const password = req.body.password;
 
@@ -73,7 +82,8 @@ router.post("/login", (req, res) => {
   User.findOne({ registration }).then(user => {
     // Check for user
     if (!user) {
-      return res.status(404).json({ registration: "User not found" });
+      errors.registration = "User not found";
+      return res.status(404).json(errors);
     }
 
     // Check Password
@@ -98,7 +108,8 @@ router.post("/login", (req, res) => {
           }
         );
       } else {
-        return res.status(400).json({ password: "Passmord incorrect" });
+        errors.password = "Password incorrect";
+        return res.status(400).json(errors);
       }
     });
   });
